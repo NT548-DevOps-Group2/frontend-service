@@ -1,0 +1,75 @@
+name: Test environment deployment
+
+on:
+    # push:
+    #     branches: ["test"]
+    #     paths:
+    #         - "src/**"
+    #         - "**/*.js"
+    #         - "Dockerfile"
+    workflow_dispatch:
+
+jobs:
+    Build-image:
+        permissions:
+            contents: read 
+            security-events: write
+        name: Build and scan image
+        runs-on: ubuntu-latest
+        steps:
+            -
+                name: Set up Docker Build
+                uses: docker/setup-buildx-action@v3
+            -
+                name: Login to Docker Hub
+                uses: docker/login-action@v3
+                with:
+                    username: ${{ secrets.DOCKERHUB_USERNAME }}
+                    password: ${{ secrets.DOCKERHUB_TOKEN }}
+            -
+                name: Build and push
+                uses: docker/build-push-action@v5
+                with:
+                    push: true
+                    tags: tonyq2k3/mern-stack-frontend:test-${{ github.sha }}
+
+            - 
+                name: Run Trivy vulnerability scanner
+                uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
+                with:
+                    image-ref: 'tonyq2k3/mern-stack-frontend:test-${{ github.sha }}'
+                    format: 'sarif'
+                    output: 'trivy-results.sarif'
+                    severity: 'CRITICAL,HIGH'
+    
+            - 
+                name: Upload Trivy scan results to GitHub Security tab
+                uses: github/codeql-action/upload-sarif@v3
+                with:
+                    sarif_file: 'trivy-results.sarif'
+        
+    Update-manifest:
+        permissions:
+            contents: write
+        name: Update manifest
+        runs-on: ubuntu-latest
+        # Needs build image job to be successful
+        needs: Build-image
+        if: ${{ success() }}
+        steps:
+            -
+                name: Checkout infrastructure repo
+                uses: actions/checkout@v3
+                with:
+                    repository: NT548-DevOps-Group2/infrastructures
+                    ref: 'main'
+                    token: ${{ secrets.GIT_TOKEN }}
+            -
+                name: Update frontend manifest
+                run: |
+                    git config --global user.email "ntbquoc2015@gmail.com"
+                    git config --global user.name "TonyQ2k3"
+                    sed -i 's#tonyq2k3/mern-stack-frontend:[^[:space:]]*$#tonyq2k3/mern-stack-frontend:test-${{ github.sha }}#g' ./test/frontend/frontend-deploy.yaml
+                    git add ./test/frontend/frontend-deploy.yaml
+                    git commit -m "Update frontend version to test-${{ github.sha }} in test environment"
+                    git push origin main
