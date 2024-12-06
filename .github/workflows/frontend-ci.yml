@@ -1,6 +1,5 @@
 name: Front-end CI
 
-
 on:
   workflow_dispatch:
 
@@ -29,6 +28,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   Build:
+    name: Build and Test
     runs-on: ubuntu-latest
 
     strategy:

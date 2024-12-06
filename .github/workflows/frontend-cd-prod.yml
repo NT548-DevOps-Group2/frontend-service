@@ -1,4 +1,4 @@
-name: Test environment deployment
+name: Production environment deployment
 
 on:
     # push:
@@ -31,13 +31,13 @@ jobs:
                 uses: docker/build-push-action@v5
                 with:
                     push: true
-                    tags: tonyq2k3/mern-stack-frontend:test-${{ github.sha }}
+                    tags: tonyq2k3/mern-stack-frontend:prod-${{ github.sha }}
 
             - 
                 name: Run Trivy vulnerability scanner
                 uses: aquasecurity/trivy-action@7b7aa264d83dc58691451798b4d117d53d21edfe
                 with:
-                    image-ref: 'tonyq2k3/mern-stack-frontend:test-${{ github.sha }}'
+                    image-ref: 'tonyq2k3/mern-stack-frontend:prod-${{ github.sha }}'
                     format: 'sarif'
                     output: 'trivy-results.sarif'
                     severity: 'CRITICAL,HIGH'
@@ -69,7 +69,7 @@ jobs:
                 run: |
                     git config --global user.email "ntbquoc2015@gmail.com"
                     git config --global user.name "TonyQ2k3"
-                    sed -i 's#tonyq2k3/mern-stack-frontend:[^[:space:]]*$#tonyq2k3/mern-stack-frontend:test-${{ github.sha }}#g' ./test/frontend/frontend-deploy.yaml
-                    git add ./test/frontend/frontend-deploy.yaml
-                    git commit -m "Update frontend version to test-${{ github.sha }} in test environment"
+                    sed -i 's#tonyq2k3/mern-stack-frontend:[^[:space:]]*$#tonyq2k3/mern-stack-frontend:prod-${{ github.sha }}#g' ./production/frontend/frontend-deploy.yaml
+                    git add ./production/frontend/frontend-deploy.yaml
+                    git commit -m "Update frontend version to prod-${{ github.sha }} in production environment"
                     git push origin main
