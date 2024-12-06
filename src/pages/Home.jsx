@@ -1,12 +1,8 @@
 import React from 'react';
 
 import { Link } from "react-router-dom";
-import tracker from '../utils/tracker';
 
 function Home() {
-  React.useEffect(() => {
-    tracker.start();
-  }, []);
 
   return (
     <main>
@@ -14,9 +10,6 @@ function Home() {
         <p>
           Motion Blogs is a blogging website where people share their own stories and experiences to others around the globe. With this website, you can express yourself, connect with others and make your voice heard!
           The purpose of this website however, is to be deployed via our team's CI/CD pipeline of our DevOps Project.
-        </p>
-        <p>
-          New header text!!!!
         </p>
 
         <div className="flex justify-center my-8">
@@ -33,10 +26,6 @@ function Home() {
         </div>
         <div className="card">
             <h3>Boosting your mood</h3>
-            <p>Express gratitude by writing down three things you're thankful for each day. It can shift your perspective and boost your mood.</p>
-        </div>
-        <div className="card">
-            <h3>This is a new card!!!</h3>
             <p>Express gratitude by writing down three things you're thankful for each day. It can shift your perspective and boost your mood.</p>
         </div>
     </main>
