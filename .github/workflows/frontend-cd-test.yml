@@ -1,13 +1,13 @@
 name: Test environment deployment
 
 on:
-    # push:
-    #     branches: ["test"]
-    #     paths:
-    #         - "src/**"
-    #         - "**/*.js"
-    #         - "Dockerfile"
-    workflow_dispatch:
+    # workflow_dispatch:
+    push:
+        branches: ["test"]
+        paths:
+            - "src/**"
+            - "**/*.js"
+            - "Dockerfile"
 
 jobs:
     Build-image:

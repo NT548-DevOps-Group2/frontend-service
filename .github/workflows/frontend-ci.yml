@@ -2,15 +2,11 @@ name: Front-end CI
 
 on:
   workflow_dispatch:
-
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - "src/**"
-  #     - "**/*.js"
-  # pull_request:
-  #   types: [opened, synchronize, reopened]
+  push:
+    branches-ignore: ["main", "test"]
+    paths:
+      - "public/**"
+      - "src/**"
     
 
 jobs:
